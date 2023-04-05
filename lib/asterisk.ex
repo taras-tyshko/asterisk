@@ -12,7 +12,7 @@ defmodule Asterisk do
       :world
 
   """
-#  @spec with_timeout(timeout :: integer())
+  #  @spec with_timeout(timeout :: integer())
   def with_timeout(timeout, func) do
     current = self()
     pid = spawn(fn -> send(current, {self(), func.()}) end)
@@ -28,6 +28,5 @@ defmodule Asterisk do
         IO.puts(:stderr, "No message in #{timeout} seconds")
         {:error, :timeout}
     end
-
   end
 end
