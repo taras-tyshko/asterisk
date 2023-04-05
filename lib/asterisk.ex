@@ -15,18 +15,18 @@ defmodule Asterisk do
 #  @spec with_timeout(timeout :: integer())
   def with_timeout(timeout, func) do
     current = self()
-    spawn(fn -> send(current, {self(), func.()}) end)
+    pid = spawn(fn -> send(current, {self(), func.()}) end)
 
     receive do
-      {:selector, number, name} when is_integer(number) ->
-        name
-      name ->
-        name
+      {^pid, result} ->
+        {:ok, result}
+
       _ ->
         IO.puts(:stderr, "Unexpected message received")
     after
       timeout ->
         IO.puts(:stderr, "No message in #{timeout} seconds")
+        {:error, :timeout}
     end
 
   end
